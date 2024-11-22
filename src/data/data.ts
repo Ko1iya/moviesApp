@@ -86,20 +86,3 @@ genres.forEach(({ name, id }) => {
 });
 
 export default genresSorted;
-
-const str =
-  'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores doloremque repellat rerum non repellendus excepturi ea cupiditate deserunt accusamus magnam!';
-
-function sliceStr(st: string) {
-  return st.split(' ').reduce((acc: string, el: string) => {
-    const res = acc.length < 100 ? acc + ' ' + el : acc;
-
-    return res;
-  }, ' ');
-}
-
-console.log(sliceStr(str));
-console.log(
-  'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores doloremque repellat rerum non repellendus'
-    .length,
-);

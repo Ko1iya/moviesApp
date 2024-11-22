@@ -31,6 +31,7 @@ class App extends Component<object, IState> {
     const { data } = this.state;
 
     return (
+      
       <div className={styles.App}>
         <ListMovies data={data} />
       </div>

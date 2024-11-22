@@ -4,6 +4,7 @@ import App from './components/App/App';
 import ErrorPage from './errorPage';
 
 import './index.css';
+import './globalStyle.scss';
 
 const router = createHashRouter([
   {

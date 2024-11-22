@@ -1,22 +1,14 @@
-import { Card, Flex } from 'antd';
+import { Flex } from 'antd';
 
 import { parse, format } from 'date-fns';
 
 import { Component } from 'react';
 import styles from './ListMovies.module.scss';
 import { Data } from '@/types';
-import Genres from '../Genre/Genres';
-
-const { Meta } = Card;
-
-const styleImg = {
-  width: '187px',
-  height: '279px',
-  borderRadius: '0px',
-};
+import Movie from '../Movie/Movie';
 
 interface IState {
-  data: Array<{ title: string; id: number }>;
+  titleHeight: number[];
 }
 
 interface IProps {
@@ -24,14 +16,14 @@ interface IProps {
 }
 
 class ListMovies extends Component<IProps, IState> {
-  constructor() {
-    super(undefined);
-  }
-
   static getDate(dateString: string) {
     const parsedDate = parse(dateString, 'yyyy-MM-dd', new Date());
     const formattedDate = format(parsedDate, 'MMMM d, yyyy');
     return formattedDate;
+  }
+
+  constructor() {
+    super(undefined);
   }
 
   render() {
@@ -43,34 +35,7 @@ class ListMovies extends Component<IProps, IState> {
           {data?.results.map(
             (film) =>
               film !== null && (
-                <Card
-                  key={film.id}
-                  className={styles.card}
-                  flex-direction="column"
-                  cover={
-                    <img
-                      alt={film.title}
-                      src={`https://image.tmdb.org/t/p/original/${film.poster_path}`}
-                      style={styleImg}
-                    />
-                  }
-                >
-                  <Meta
-                    className={styles.meta}
-                    title={<div className={styles.title}>{film.title}</div>}
-                    description={
-                      <div className={styles.description}>
-                        <div
-                          className={styles.releaseDate}
-                        >{`${ListMovies.getDate(film.release_date)}`}</div>
-                        <Genres film={film} />
-                        <div
-                          className={styles.overview}
-                        >{`${film.overview.slice(0, 100)}...`}</div>
-                      </div>
-                    }
-                  />
-                </Card>
+                <Movie film={film} getDate={ListMovies.getDate}></Movie>
               ),
           )}
         </Flex>
