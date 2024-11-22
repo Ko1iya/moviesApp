@@ -16,14 +16,11 @@ interface IProps {
 }
 
 class ListMovies extends Component<IProps, IState> {
+  //
   static getDate(dateString: string) {
     const parsedDate = parse(dateString, 'yyyy-MM-dd', new Date());
     const formattedDate = format(parsedDate, 'MMMM d, yyyy');
     return formattedDate;
-  }
-
-  constructor() {
-    super(undefined);
   }
 
   render() {

@@ -15,7 +15,7 @@ class ApiService {
 
   getResource = async () => {
     const response = await fetch(
-      `https://api.themoviedb.org/3/search/movie?query=s`,
+      `https://api.themoviedb.org/3/search/movie?query=t`,
       this.header,
     );
 
