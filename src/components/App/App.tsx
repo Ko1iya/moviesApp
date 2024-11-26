@@ -1,42 +1,25 @@
-import { Component } from 'react';
-import ApiService from '@/services/apiService';
+import type { PaginationProps } from 'antd';
+import { useState } from 'react';
+
+import Header from '../Header/Header';
 import ListMovies from '../ListMovies/ListMovies';
-import { Data } from '@/types';
+import Pagination from '../Pagination/Pagination';
 import styles from './App.module.scss';
 
-interface IState {
-  data: Data;
-}
+function App() {
+  const [page, setPage] = useState(1);
 
-class App extends Component<object, IState> {
-  apiService = new ApiService();
+  const onChange: PaginationProps['onChange'] = (newPage: number) => {
+    setPage(newPage);
+  };
 
-  constructor() {
-    super(undefined);
-
-    this.state = {
-      data: null,
-    };
-
-    this.getData();
-  }
-
-  getData() {
-    this.apiService.getResource().then((res: Data) => {
-      this.setState({ data: res });
-    });
-  }
-
-  render() {
-    const { data } = this.state;
-
-    return (
-      
-      <div className={styles.App}>
-        <ListMovies data={data} />
-      </div>
-    );
-  }
+  return (
+    <div className={styles.App}>
+      <Header />
+      <ListMovies page={page} />
+      <Pagination page={page} onChange={onChange} />
+    </div>
+  );
 }
 
 export default App;

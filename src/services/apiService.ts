@@ -13,13 +13,15 @@ class ApiService {
   //   .then(res => console.log(res))
   //   .catch(err => console.error(err));
 
-  getResource = async () => {
+  getResource = async (page: number) => {
     const response = await fetch(
-      `https://api.themoviedb.org/3/search/movie?query=t`,
+      `https://api.themoviedb.org/3/search/movie?query=return&page=${page}&include_adult=false&language=en-US`,
       this.header,
     );
 
-    if (!response.ok) {
+    if (!response.ok && response.status === 400) {
+      throw new Error('Таких фильмов не найдено');
+    } else if (!response.ok) {
       throw new Error(response.statusText);
     }
 
