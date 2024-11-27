@@ -1,8 +1,9 @@
-import { Alert, Flex, Spin } from 'antd';
+import { Alert, Flex, Spin, Typography } from 'antd';
 
 import { parse, format } from 'date-fns';
 
 import { Component } from 'react';
+
 import styles from './ListMovies.module.scss';
 import { Data } from '@/types';
 import Movie from '../Movie/Movie';
@@ -16,12 +17,12 @@ interface IState {
 
 interface IProps {
   page: number;
+  searchText: string;
 }
 
 class ListMovies extends Component<IProps, IState> {
   apiService = new ApiService();
 
-  //
   static getDate(dateString: string) {
     if (!dateString) {
       return 'Дата выхода не известна';
@@ -46,18 +47,22 @@ class ListMovies extends Component<IProps, IState> {
   }
 
   componentDidUpdate(prevProps: Readonly<IProps>): void {
-    const { page } = this.props;
+    const { page, searchText } = this.props;
 
     if (prevProps.page !== page) {
+      this.getData();
+    }
+
+    if (prevProps.searchText !== searchText) {
       this.getData();
     }
   }
 
   getData() {
-    const { page } = this.props;
+    const { page, searchText } = this.props;
 
     this.apiService
-      .getResource(page)
+      .getResource(page, searchText)
       .then((res: Data) => {
         this.setState({ data: res, load: false });
       })
@@ -68,6 +73,12 @@ class ListMovies extends Component<IProps, IState> {
 
   render() {
     const { data, load, err } = this.state;
+    const { page } = this.props;
+
+    const massage =
+      page > 1 && data?.results.length === 0
+        ? ' По такому запросу больше нет фильмов!'
+        : 'Ничего не найдено';
 
     const error = err ? (
       <Alert message="Блин, ошибка :(" description={`${err}`} type="error" />
@@ -77,15 +88,19 @@ class ListMovies extends Component<IProps, IState> {
       !load && !error ? (
         <div className={styles.listMovies}>
           <Flex wrap="wrap" justify="center" align="center" gap="large">
-            {data?.results.map(
-              (film) =>
-                film !== null && (
-                  <Movie
-                    film={film}
-                    getDate={ListMovies.getDate}
-                    key={film.id}
-                  ></Movie>
-                ),
+            {data?.results.length > 0 ? (
+              data?.results.map(
+                (film) =>
+                  film !== null && (
+                    <Movie
+                      film={film}
+                      getDate={ListMovies.getDate}
+                      key={film.id}
+                    ></Movie>
+                  ),
+              )
+            ) : (
+              <Typography>{massage}</Typography>
             )}
           </Flex>
         </div>

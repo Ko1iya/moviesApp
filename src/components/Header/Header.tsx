@@ -2,11 +2,17 @@ import Search from '../Search/Search';
 import ToggleSearch from '../ToggleSearch/ToggleSearch';
 import styles from './Header.module.scss';
 
-function Header() {
+interface IProps {
+  searchFunc: (text: string) => void;
+}
+
+function Header(props: IProps) {
+  const { searchFunc } = props;
+
   return (
     <div className={styles.header}>
       <ToggleSearch />
-      <Search />
+      <Search searchFunc={searchFunc} />
     </div>
   );
 }

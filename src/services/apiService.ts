@@ -13,9 +13,15 @@ class ApiService {
   //   .then(res => console.log(res))
   //   .catch(err => console.error(err));
 
-  getResource = async (page: number) => {
+  getResource = async (page: number, searchText: string) => {
+    let newSearchText = searchText;
+
+    if (searchText === '') {
+      newSearchText = 'return';
+    }
+
     const response = await fetch(
-      `https://api.themoviedb.org/3/search/movie?query=return&page=${page}&include_adult=false&language=en-US`,
+      `https://api.themoviedb.org/3/search/movie?query=${newSearchText}&page=${page}&include_adult=false&language=en-US`,
       this.header,
     );
 
