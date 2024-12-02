@@ -13,6 +13,7 @@ interface IState {
   data: Data;
   load: boolean;
   err: object | null;
+  guestId: string | null;
 }
 
 interface IProps {
@@ -39,11 +40,15 @@ class ListMovies extends Component<IProps, IState> {
       data: null,
       load: true,
       err: null,
+      guestId: null,
     };
   }
 
   componentDidMount(): void {
     this.getData();
+
+    // this.setState({guestId: this.getIdGuest().th)
+    this.getIdGuest();
   }
 
   componentDidUpdate(prevProps: Readonly<IProps>): void {
@@ -71,8 +76,14 @@ class ListMovies extends Component<IProps, IState> {
       });
   }
 
+  getIdGuest() {
+    this.apiService.createGuestSession().then((res) => {
+      this.setState({ guestId: res.guest_session_id });
+    });
+  }
+
   render() {
-    const { data, load, err } = this.state;
+    const { data, load, err, guestId } = this.state;
     const { page } = this.props;
 
     const massage =
@@ -96,6 +107,7 @@ class ListMovies extends Component<IProps, IState> {
                       film={film}
                       getDate={ListMovies.getDate}
                       key={film.id}
+                      guestId={guestId}
                     ></Movie>
                   ),
               )

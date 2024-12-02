@@ -1,10 +1,10 @@
 class ApiService {
-  private header: RequestInit = {
+  private headerGet: RequestInit = {
     method: 'GET',
     headers: {
       accept: 'application/json',
       Authorization:
-        'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhMmJlNDcwZDA4NmIyMzhjMmRmZDdjY2JmNjk4MzI4ZSIsIm5iZiI6MTczMjAwNzQ3OS4zMjg2ODE1LCJzdWIiOiI2NzNjNTM2M2YwNjM0Y2VhMzgyYjYxNzMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.pJUqV-3xDj_VysrJ7RA6ymall7mN0a_FEoqml0ANYzM',
+        'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhMmJlNDcwZDA4NmIyMzhjMmRmZDdjY2JmNjk4MzI4ZSIsIm5iZiI6MTczMjAwNjc1NS45OTksInN1YiI6IjY3M2M1MzYzZjA2MzRjZWEzODJiNjE3MyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.-iZtjhUor7luUlOEep_V_ZmAZwOPtqDZSvwbWu6Rs7M',
     },
   };
 
@@ -22,7 +22,7 @@ class ApiService {
 
     const response = await fetch(
       `https://api.themoviedb.org/3/search/movie?query=${newSearchText}&page=${page}&include_adult=false&language=en-US`,
-      this.header,
+      this.headerGet,
     );
 
     if (!response.ok && response.status === 400) {
@@ -30,6 +30,48 @@ class ApiService {
     } else if (!response.ok) {
       throw new Error(response.statusText);
     }
+
+    const data = await response.json();
+
+    return data;
+  };
+
+  createGuestSession = async () => {
+    const response = await fetch(
+      'https://api.themoviedb.org/3/authentication/guest_session/new',
+      this.headerGet,
+    );
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    const data = await response.json();
+
+    return data;
+  };
+
+  static rateMovie = async (guestId: string, movieId: number, rate: number) => {
+    console.log(
+      `https://api.themoviedb.org/3/movie/${movieId}/rating?guest_session_id=${guestId}`,
+      rate,
+    );
+
+    const response = await fetch(
+      `https://api.themoviedb.org/3/movie/${movieId}/rating?guest_session_id=${guestId}`,
+      {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/json;charset=utf-8',
+          Authorization:
+            'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhMmJlNDcwZDA4NmIyMzhjMmRmZDdjY2JmNjk4MzI4ZSIsIm5iZiI6MTczMjAwNjc1NS45OTksInN1YiI6IjY3M2M1MzYzZjA2MzRjZWEzODJiNjE3MyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.-iZtjhUor7luUlOEep_V_ZmAZwOPtqDZSvwbWu6Rs7M',
+        },
+        body: `{"value": ${rate}}`,
+      },
+    );
+
+    console.log(response);
 
     const data = await response.json();
 

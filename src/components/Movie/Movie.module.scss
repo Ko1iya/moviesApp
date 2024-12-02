@@ -27,7 +27,14 @@
 .meta {
   padding-top: -10px;
   height: 100%;
+  width: 240px;
+  position: relative;
 }
 
 .description {
+}
+
+.rate {
+  position: absolute;
+  bottom: 10px;
 }

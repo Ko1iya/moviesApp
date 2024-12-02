@@ -1,9 +1,10 @@
-import { Card, Typography } from 'antd';
+import { Card, Rate, Typography } from 'antd';
 import { useRef, useEffect, useState } from 'react';
 import { item } from '@/types';
 
 import styles from './Movie.module.scss';
 import Genres from '../Genre/Genres';
+import ApiService from '@/services/apiService';
 
 const styleImg = {
   width: '187px',
@@ -14,15 +15,17 @@ const styleImg = {
 interface IProps {
   film: item;
   getDate: (str: string) => void;
+  guestId: string;
 }
 
 function Movie(prop: IProps) {
   const titleRef = useRef(null);
   const genresRef = useRef(null);
 
-  const { film, getDate } = prop;
+  const { film, getDate, guestId } = prop;
 
   const [height, setHeight] = useState(0);
+  const [value, setValue] = useState(0);
 
   useEffect(() => {
     const title = titleRef.current;
@@ -46,6 +49,14 @@ function Movie(prop: IProps) {
 
     return `${newstr}...`;
   }
+
+  useEffect(() => {
+    if (value === 0) {
+      return;
+    }
+
+    ApiService.rateMovie(guestId, film.id, value);
+  }, [value]);
 
   return (
     <Card
@@ -79,6 +90,13 @@ function Movie(prop: IProps) {
               className={styles.overview}
             >{`${sliceStr(film.overview, height)}`}</div>
           )}
+          <Rate
+            onChange={setValue}
+            value={value}
+            count={10}
+            style={{ fontSize: '16px' }}
+            className={styles.rate}
+          />
         </div>
       </div>
     </Card>
