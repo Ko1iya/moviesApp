@@ -9,6 +9,11 @@ import styles from './App.module.scss';
 function App() {
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState('');
+  const [isRated, setIsRated] = useState(false);
+
+  const toggleIsRated = () => {
+    setIsRated((pre) => !pre);
+  };
 
   const searchFunc = (text: string) => {
     setSearchText(text);
@@ -20,8 +25,8 @@ function App() {
 
   return (
     <div className={styles.App}>
-      <Header searchFunc={searchFunc} />
-      <ListMovies page={page} searchText={searchText} />
+      <Header toggleIsRated={toggleIsRated} searchFunc={searchFunc} />
+      <ListMovies isRated={isRated} page={page} searchText={searchText} />
       <Pagination page={page} onChange={onChange} />
     </div>
   );

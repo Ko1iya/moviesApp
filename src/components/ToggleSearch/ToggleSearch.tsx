@@ -1,13 +1,24 @@
 import { Radio } from 'antd';
 import styles from './ToggleSearch.module.scss';
 
-function ToggleSearch() {
+interface IProps {
+  toggleIsRated: () => void;
+}
+
+function ToggleSearch(props: IProps) {
+  const { toggleIsRated } = props;
+
+  const onChange = () => {
+    toggleIsRated();
+  };
+
   return (
     <div className={styles.toggleSearch}>
       <Radio.Group
         defaultValue="a"
         size="large"
         className={styles.butContainer}
+        onChange={onChange}
       >
         <Radio.Button value="a" style={{ borderRadius: '0px' }}>
           Search

@@ -51,12 +51,24 @@ class ApiService {
     return data;
   };
 
-  static rateMovie = async (guestId: string, movieId: number, rate: number) => {
-    console.log(
-      `https://api.themoviedb.org/3/movie/${movieId}/rating?guest_session_id=${guestId}`,
-      rate,
+  getRatedMovies = async (guestId: string, page: number) => {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/guest_session/${guestId}/rated/movies?language=en-US&${page}&sort_by=created_at.asc`,
+      this.headerGet,
     );
 
+    if (!response.ok && response.status === 400) {
+      throw new Error('Таких фильмов не найдено');
+    } else if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    const data = await response.json();
+
+    return data;
+  };
+
+  static rateMovie = async (guestId: string, movieId: number, rate: number) => {
     const response = await fetch(
       `https://api.themoviedb.org/3/movie/${movieId}/rating?guest_session_id=${guestId}`,
       {
@@ -70,8 +82,6 @@ class ApiService {
         body: `{"value": ${rate}}`,
       },
     );
-
-    console.log(response);
 
     const data = await response.json();
 

@@ -10,6 +10,7 @@ import Movie from '../Movie/Movie';
 import ApiService from '@/services/apiService';
 
 interface IState {
+  // dataRate: Data | 'Вы еще не оценивали фильмы';
   data: Data;
   load: boolean;
   err: object | null;
@@ -19,6 +20,7 @@ interface IState {
 interface IProps {
   page: number;
   searchText: string;
+  isRated: boolean;
 }
 
 class ListMovies extends Component<IProps, IState> {
@@ -37,6 +39,7 @@ class ListMovies extends Component<IProps, IState> {
     super(props);
 
     this.state = {
+      // dataRate: 'Вы еще не оценивали фильмы',
       data: null,
       load: true,
       err: null,
@@ -52,13 +55,22 @@ class ListMovies extends Component<IProps, IState> {
   }
 
   componentDidUpdate(prevProps: Readonly<IProps>): void {
-    const { page, searchText } = this.props;
+    const { page, searchText, isRated } = this.props;
+    const { guestId } = this.state;
 
     if (prevProps.page !== page) {
       this.getData();
     }
 
     if (prevProps.searchText !== searchText) {
+      this.getData();
+    }
+
+    if (prevProps.isRated !== isRated && isRated) {
+      this.changeDataForRated(guestId, page);
+    }
+
+    if (prevProps.isRated !== isRated && !isRated) {
       this.getData();
     }
   }
@@ -80,6 +92,17 @@ class ListMovies extends Component<IProps, IState> {
     this.apiService.createGuestSession().then((res) => {
       this.setState({ guestId: res.guest_session_id });
     });
+  }
+
+  changeDataForRated(guest: string, page: number) {
+    this.apiService
+      .getRatedMovies(guest, page)
+      .then((res: Data) => {
+        this.setState({ data: res, load: false });
+      })
+      .catch(() => {
+        this.setState({ data: null, load: false });
+      });
   }
 
   render() {

@@ -15,6 +15,7 @@ export interface item {
   video?: boolean | null;
   vote_average?: number | null;
   vote_count?: number | null;
+  rating?: number | null;
 }
 export interface Data {
   page: number;

@@ -25,7 +25,17 @@ function Movie(prop: IProps) {
   const { film, getDate, guestId } = prop;
 
   const [height, setHeight] = useState(0);
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(film.rating || 0);
+  const [ishaveRate, setIsHaveRate] = useState(!!film.rating || false);
+
+  const changeValue = (val: number) => {
+    if (ishaveRate) {
+      setValue(0);
+      setIsHaveRate(false);
+      return;
+    }
+    setValue(val);
+  };
 
   useEffect(() => {
     const title = titleRef.current;
@@ -91,11 +101,12 @@ function Movie(prop: IProps) {
             >{`${sliceStr(film.overview, height)}`}</div>
           )}
           <Rate
-            onChange={setValue}
+            onChange={changeValue}
             value={value}
             count={10}
             style={{ fontSize: '16px' }}
             className={styles.rate}
+            allowClear
           />
         </div>
       </div>
