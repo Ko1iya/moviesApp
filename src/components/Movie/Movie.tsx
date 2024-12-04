@@ -16,16 +16,17 @@ interface IProps {
   film: item;
   getDate: (str: string) => void;
   guestId: string;
+  rate: number;
 }
 
 function Movie(prop: IProps) {
   const titleRef = useRef(null);
   const genresRef = useRef(null);
 
-  const { film, getDate, guestId } = prop;
+  const { film, getDate, guestId, rate } = prop;
 
   const [height, setHeight] = useState(0);
-  const [value, setValue] = useState(film.rating || 0);
+  const [value, setValue] = useState(rate || 0);
   const [ishaveRate, setIsHaveRate] = useState(!!film.rating || false);
 
   const changeValue = (val: number) => {

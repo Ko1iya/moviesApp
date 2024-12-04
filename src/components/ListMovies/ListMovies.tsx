@@ -5,12 +5,12 @@ import { parse, format } from 'date-fns';
 import { Component } from 'react';
 
 import styles from './ListMovies.module.scss';
-import { Data } from '@/types';
+import { Data, item } from '@/types';
 import Movie from '../Movie/Movie';
 import ApiService from '@/services/apiService';
 
 interface IState {
-  // dataRate: Data | 'Вы еще не оценивали фильмы';
+  dataRated: Data;
   data: Data;
   load: boolean;
   err: object | null;
@@ -39,7 +39,7 @@ class ListMovies extends Component<IProps, IState> {
     super(props);
 
     this.state = {
-      // dataRate: 'Вы еще не оценивали фильмы',
+      dataRated: null,
       data: null,
       load: true,
       err: null,
@@ -49,8 +49,6 @@ class ListMovies extends Component<IProps, IState> {
 
   componentDidMount(): void {
     this.getData();
-
-    // this.setState({guestId: this.getIdGuest().th)
     this.getIdGuest();
   }
 
@@ -60,6 +58,7 @@ class ListMovies extends Component<IProps, IState> {
 
     if (prevProps.page !== page) {
       this.getData();
+      this.changeDataForRated(guestId, page);
     }
 
     if (prevProps.searchText !== searchText) {
@@ -94,52 +93,44 @@ class ListMovies extends Component<IProps, IState> {
     });
   }
 
+  getRateFilm(id: number) {
+    const { dataRated } = this.state;
+
+    let rate;
+
+    if (dataRated?.results) {
+      dataRated.results.forEach((el: item) => {
+        if (el.id === id) {
+          rate = el.rating;
+        }
+      });
+    }
+    return rate;
+  }
+
   changeDataForRated(guest: string, page: number) {
     this.apiService
       .getRatedMovies(guest, page)
       .then((res: Data) => {
-        this.setState({ data: res, load: false });
+        this.setState({ dataRated: res, load: false });
       })
       .catch(() => {
-        this.setState({ data: null, load: false });
+        this.setState({
+          dataRated: { page: 1, results: [], total_pages: 0, total_results: 0 },
+          load: false,
+        });
       });
   }
 
   render() {
-    const { data, load, err, guestId } = this.state;
-    const { page } = this.props;
+    const { data, load, err, guestId, dataRated } = this.state;
+    const { page, isRated } = this.props;
 
-    const massage =
-      page > 1 && data?.results.length === 0
-        ? ' По такому запросу больше нет фильмов!'
-        : 'Ничего не найдено';
+    const finalData = isRated ? dataRated : data;
 
     const error = err ? (
       <Alert message="Блин, ошибка :(" description={`${err}`} type="error" />
     ) : null;
-
-    const listMovies =
-      !load && !error ? (
-        <div className={styles.listMovies}>
-          <Flex wrap="wrap" justify="center" align="center" gap="large">
-            {data?.results.length > 0 ? (
-              data?.results.map(
-                (film) =>
-                  film !== null && (
-                    <Movie
-                      film={film}
-                      getDate={ListMovies.getDate}
-                      key={film.id}
-                      guestId={guestId}
-                    ></Movie>
-                  ),
-              )
-            ) : (
-              <Typography>{massage}</Typography>
-            )}
-          </Flex>
-        </div>
-      ) : null;
 
     const spin = load ? (
       <div className={styles.listMovies}>
@@ -154,6 +145,47 @@ class ListMovies extends Component<IProps, IState> {
         </Flex>
       </div>
     ) : null;
+
+    let listMovies = null;
+
+    if (!load && !error) {
+      if (page > 1 && finalData?.results.length === 0) {
+        listMovies = (
+          <div className={styles.listMovies}>
+            <Flex wrap="wrap" justify="center" align="center" gap="large">
+              <Typography>По такому запросу больше нет фильмов!</Typography>
+            </Flex>
+          </div>
+        );
+      } else if (page === 1 && finalData?.results.length === 0) {
+        listMovies = (
+          <div className={styles.listMovies}>
+            <Flex wrap="wrap" justify="center" align="center" gap="large">
+              <Typography>Ничего не найдено</Typography>
+            </Flex>
+          </div>
+        );
+      } else {
+        listMovies = (
+          <div className={styles.listMovies}>
+            <Flex wrap="wrap" justify="center" align="center" gap="large">
+              {finalData?.results.map(
+                (film) =>
+                  film !== null && (
+                    <Movie
+                      film={film}
+                      getDate={ListMovies.getDate}
+                      key={film.id}
+                      guestId={guestId}
+                      rate={this.getRateFilm(film.id)}
+                    ></Movie>
+                  ),
+              )}
+            </Flex>
+          </div>
+        );
+      }
+    }
 
     return (
       <>

@@ -3,12 +3,14 @@ import styles from './ToggleSearch.module.scss';
 
 interface IProps {
   toggleIsRated: () => void;
+  changePage: () => void;
 }
 
 function ToggleSearch(props: IProps) {
-  const { toggleIsRated } = props;
+  const { toggleIsRated, changePage } = props;
 
   const onChange = () => {
+    changePage();
     toggleIsRated();
   };
 

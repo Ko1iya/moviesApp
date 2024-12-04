@@ -11,6 +11,10 @@ function App() {
   const [searchText, setSearchText] = useState('');
   const [isRated, setIsRated] = useState(false);
 
+  const changePage = () => {
+    setPage(1);
+  };
+
   const toggleIsRated = () => {
     setIsRated((pre) => !pre);
   };
@@ -25,7 +29,12 @@ function App() {
 
   return (
     <div className={styles.App}>
-      <Header toggleIsRated={toggleIsRated} searchFunc={searchFunc} />
+      <Header
+        isRated={isRated}
+        toggleIsRated={toggleIsRated}
+        searchFunc={searchFunc}
+        changePage={changePage}
+      />
       <ListMovies isRated={isRated} page={page} searchText={searchText} />
       <Pagination page={page} onChange={onChange} />
     </div>
