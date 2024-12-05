@@ -17,7 +17,7 @@ class ApiService {
     let newSearchText = searchText;
 
     if (searchText === '') {
-      newSearchText = 'return';
+      newSearchText = 's';
     }
 
     const response = await fetch(
@@ -81,6 +81,17 @@ class ApiService {
         },
         body: `{"value": ${rate}}`,
       },
+    );
+
+    const data = await response.json();
+
+    return data;
+  };
+
+  getGenres = async () => {
+    const response = await fetch(
+      'https://api.themoviedb.org/3/genre/movie/list?language=en',
+      this.headerGet,
     );
 
     const data = await response.json();

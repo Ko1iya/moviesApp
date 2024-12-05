@@ -29,6 +29,21 @@ function Movie(prop: IProps) {
   const [value, setValue] = useState(rate || 0);
   const [ishaveRate, setIsHaveRate] = useState(!!film.rating || false);
 
+  const currentRate = Math.round(film.vote_average * 10) / 10;
+
+  const colorPopularity = () => {
+    if (currentRate < 3) {
+      return '#E90000';
+    }
+    if (currentRate < 5) {
+      return '#E97E00';
+    }
+    if (currentRate < 7) {
+      return '#E9D100';
+    }
+    return '#66E900';
+  };
+
   const changeValue = (val: number) => {
     if (ishaveRate) {
       setValue(0);
@@ -49,7 +64,7 @@ function Movie(prop: IProps) {
 
   function sliceStr(str: string, len: number) {
     const newstr = str.split(' ').reduce((acc: string, el: string) => {
-      const res = acc.length < 250 - len ? `${acc} ${el}` : acc;
+      const res = acc.length < len * -1.94 + 333 ? `${acc} ${el}` : acc;
 
       return res;
     }, '');
@@ -83,9 +98,19 @@ function Movie(prop: IProps) {
       }
     >
       <div className={styles.meta}>
-        <Typography.Title level={4} className={styles.title} ref={titleRef}>
-          {film.title}
-        </Typography.Title>
+        <div className={styles.headerMovie}>
+          <Typography.Title level={4} className={styles.title} ref={titleRef}>
+            {film.title}
+          </Typography.Title>
+          <div
+            style={{
+              borderColor: colorPopularity(),
+            }}
+            className={styles.popularity}
+          >
+            {currentRate}
+          </div>
+        </div>
 
         <div className={styles.description}>
           <div
